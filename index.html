@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Akshay Mohan Kank — PostgreSQL &amp; Cloud Database Engineer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-black:#050B14;
+    --bg-panel: rgba(18,34,54,0.55);
+    --bg-panel-solid:#0E1B2C;
+    --line-faint: rgba(90,180,210,0.10);
+    --line-soft: rgba(90,180,210,0.20);
+    --cyan:#4FE0F0;
+    --cyan-dim:#2CA9BD;
+    --blue:#3E7BE0;
+    --amber:#F2B85C;
+    --ink-white:#EAF6FA;
+    --ink-muted:#7E9AB0;
+    --ink-faint:#4B6478;
+    --radius: 6px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:
+      radial-gradient(ellipse 1000px 700px at 82% 4%, rgba(79,224,240,0.16), transparent 55%),
+      radial-gradient(ellipse 700px 500px at 15% 95%, rgba(62,123,224,0.10), transparent 60%),
+      radial-gradient(ellipse 1400px 900px at 50% -10%, rgba(20,50,75,0.5), transparent 60%),
+      var(--bg-black);
+    color:var(--ink-white);
+    font-family:'IBM Plex Sans',sans-serif;
+    line-height:1.6;
+    min-height:100vh;
+  }
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 24px;}
+  a{color:var(--cyan);text-decoration:none;}
+  a:hover{text-decoration:underline;}
+
+  svg.icon{width:15px;height:15px;flex:0 0 auto;stroke:var(--cyan);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;vertical-align:-3px;}
+
+  /* ===== Backdrop circuitry ===== */
+  .circuit-bg{
+    position:fixed;top:0;left:0;width:100%;height:100%;
+    z-index:-1;opacity:0.35;pointer-events:none;
+    background-image:
+      linear-gradient(var(--line-faint) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line-faint) 1px, transparent 1px);
+    background-size:44px 44px;
+    mask-image: radial-gradient(ellipse 900px 700px at 75% 10%, black, transparent 70%);
+  }
+
+  /* ===== Header / Title block ===== */
+  header{
+    border-bottom:1px solid var(--line-soft);
+    padding:28px 0;
+    position:relative;
+  }
+  .titleblock{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    flex-wrap:wrap;
+    gap:24px;
+  }
+  h1{
+    font-size:clamp(32px,5vw,50px);
+    font-weight:700;
+    letter-spacing:-0.01em;
+    margin-bottom:8px;
+    background: linear-gradient(120deg, #FFFFFF 30%, var(--cyan) 90%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+  .role-line{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:15px;
+    color:var(--ink-muted);
+  }
+  .role-line .arrow{color:var(--amber);margin:0 8px;}
+  .tb-right{
+    text-align:right;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13px;
+    color:var(--ink-muted);
+    min-width:240px;
+  }
+  .tb-right .contact-line{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    gap:8px;
+    margin-bottom:8px;
+  }
+  .tb-right a{color:var(--ink-white);}
+  .tb-right a:hover{color:var(--cyan);}
+
+  /* ===== Holographic HUD visual ===== */
+  .hud-section{
+    padding:0 0 10px;
+    border-bottom:1px solid var(--line-soft);
+    display:flex;
+    justify-content:center;
+    position:relative;
+  }
+  .hud-wrap{
+    position:relative;
+    width:100%;
+    max-width:640px;
+    padding:36px 0 24px;
+  }
+  .hud-glow{
+    position:absolute;
+    top:50%;left:50%;
+    width:380px;height:380px;
+    transform:translate(-50%,-50%);
+    background:radial-gradient(circle, rgba(79,224,240,0.16), transparent 68%);
+    filter:blur(6px);
+    pointer-events:none;
+  }
+  .hud-ring{
+    fill:none;
+    stroke:var(--cyan);
+    stroke-opacity:0.35;
+  }
+  .hud-ring.spin{
+    transform-origin:200px 160px;
+    animation:spin 18s linear infinite;
+  }
+  .hud-ring.spin-rev{
+    transform-origin:200px 160px;
+    animation:spin-rev 26s linear infinite;
+  }
+  @keyframes spin{ to{ transform:rotate(360deg);} }
+  @keyframes spin-rev{ to{ transform:rotate(-360deg);} }
+  .hud-node-label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    fill:var(--ink-white);
+  }
+  .hud-node-value{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:9.5px;
+    fill:var(--ink-muted);
+  }
+  .hud-core-label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    fill:var(--cyan);
+    text-anchor:middle;
+  }
+  .hud-core-sub{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:8.5px;
+    fill:var(--ink-muted);
+    text-anchor:middle;
+  }
+
+  /* ===== Stats strip ===== */
+  .stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    border-bottom:1px solid var(--line-soft);
+  }
+  .stat{
+    padding:24px;
+    border-right:1px solid var(--line-soft);
+    position:relative;
+  }
+  .stat:last-child{border-right:none;}
+  .stat::before{
+    content:'';
+    position:absolute;top:0;left:0;width:2px;height:0;
+    background:var(--cyan);
+    transition:height 0.3s ease;
+    box-shadow:0 0 8px var(--cyan);
+  }
+  .stat:hover::before{height:100%;}
+  .stat .num{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:30px;
+    font-weight:600;
+    color:var(--cyan);
+    text-shadow: 0 0 16px rgba(79,224,240,0.35);
+  }
+  .stat .label{
+    font-size:12px;
+    color:var(--ink-muted);
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    margin-top:4px;
+  }
+
+  /* ===== Section shell ===== */
+  section{padding:60px 0;border-bottom:1px solid var(--line-soft);}
+  section:last-of-type{border-bottom:none;}
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    color:var(--amber);
+    margin-bottom:10px;
+  }
+  h2{
+    font-size:25px;
+    font-weight:600;
+    margin-bottom:28px;
+    color:var(--ink-white);
+  }
+  p.summary{
+    color:var(--ink-muted);
+    max-width:680px;
+    font-size:15.5px;
+  }
+
+  /* ===== Career topology (signature element) ===== */
+  .topology{
+    display:flex;
+    align-items:center;
+    overflow-x:auto;
+    padding:24px 0 8px;
+    gap:0;
+  }
+  .node{
+    flex:0 0 auto;
+    min-width:150px;
+    background: var(--bg-panel);
+    backdrop-filter: blur(6px);
+    border:1px solid var(--line-soft);
+    border-radius:var(--radius);
+    padding:14px 16px;
+    position:relative;
+    box-shadow: 0 0 0 rgba(79,224,240,0);
+    transition: box-shadow 0.25s ease, border-color 0.25s ease;
+  }
+  .node:hover{
+    border-color:var(--cyan-dim);
+    box-shadow: 0 0 18px rgba(79,224,240,0.18);
+  }
+  .node.goal{
+    border:1px dashed var(--amber);
+    background:transparent;
+    box-shadow: 0 0 18px rgba(242,184,92,0.10);
+  }
+  .node .role{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13px;
+    font-weight:500;
+    color:var(--ink-white);
+  }
+  .node.goal .role{color:var(--amber);}
+  .node .years{
+    font-size:11px;
+    color:var(--ink-muted);
+    margin-top:4px;
+  }
+  .connector{
+    flex:0 0 auto;
+    width:36px;
+    height:2px;
+    background:var(--cyan);
+    position:relative;
+    margin:0 4px;
+    box-shadow: 0 0 8px var(--cyan);
+  }
+  .connector.dashed{
+    background:none;
+    border-top:2px dashed var(--amber);
+    box-shadow:none;
+  }
+  .connector::after{
+    content:'';
+    position:absolute;
+    right:-1px;top:-3px;
+    width:0;height:0;
+    border-top:4px solid transparent;
+    border-bottom:4px solid transparent;
+    border-left:6px solid var(--cyan);
+  }
+  .connector.dashed::after{border-left-color:var(--amber);}
+  .topology-legend{
+    display:flex;
+    gap:24px;
+    margin-top:18px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    color:var(--ink-muted);
+  }
+  .legend-item{display:flex;align-items:center;gap:6px;}
+  .legend-swatch{width:14px;height:2px;background:var(--cyan);display:inline-block;box-shadow:0 0 6px var(--cyan);}
+  .legend-swatch.dashed{background:none;border-top:2px dashed var(--amber);box-shadow:none;}
+
+  /* ===== Expertise grid ===== */
+  .expertise-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:16px;
+  }
+  .expertise-card{
+    background: var(--bg-panel);
+    backdrop-filter: blur(6px);
+    border:1px solid var(--line-soft);
+    border-radius:var(--radius);
+    padding:20px;
+    transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .expertise-card:hover{
+    border-color:var(--cyan-dim);
+    transform:translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.35), 0 0 18px rgba(79,224,240,0.12);
+  }
+  .expertise-card .icon-label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--cyan);
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    margin-bottom:8px;
+  }
+  .expertise-card h3{
+    font-size:16px;
+    font-weight:600;
+    margin-bottom:8px;
+    color:var(--ink-white);
+  }
+  .expertise-card p{
+    font-size:14px;
+    color:var(--ink-muted);
+  }
+
+  /* ===== Experience timeline ===== */
+  .job{
+    display:grid;
+    grid-template-columns:180px 1fr;
+    gap:24px;
+    padding:26px 0;
+    border-top:1px solid var(--line-soft);
+  }
+  .job:first-child{border-top:none;}
+  .job-meta{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13px;
+    color:var(--ink-muted);
+  }
+  .job-meta .dates{color:var(--cyan);display:block;margin-bottom:6px;}
+  .job-title{font-size:17px;font-weight:600;margin-bottom:2px;color:var(--ink-white);}
+  .job-company{font-size:14px;color:var(--ink-muted);margin-bottom:12px;}
+  .job-desc{font-size:14.5px;color:var(--ink-muted);margin-bottom:14px;max-width:640px;}
+  .tag-row{display:flex;flex-wrap:wrap;gap:8px;}
+  .tag{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11.5px;
+    color:var(--ink-white);
+    background:rgba(79,224,240,0.06);
+    border:1px solid var(--line-soft);
+    border-radius:3px;
+    padding:4px 10px;
+  }
+  .project-block{
+    margin-top:16px;
+    padding-left:16px;
+    border-left:2px solid var(--line-soft);
+  }
+  .project-block h4{
+    font-size:14px;
+    font-weight:600;
+    color:var(--cyan);
+    margin-bottom:6px;
+  }
+  .project-block ul{
+    list-style:none;
+    font-size:13.5px;
+    color:var(--ink-muted);
+  }
+  .project-block li{
+    position:relative;
+    padding-left:14px;
+    margin-bottom:6px;
+  }
+  .project-block li::before{
+    content:'—';
+    position:absolute;
+    left:0;
+    color:var(--ink-faint);
+  }
+
+  /* ===== Certifications / achievements ===== */
+  .cert-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:14px;
+  }
+  .cert-card{
+    background: var(--bg-panel);
+    backdrop-filter: blur(6px);
+    border:1px solid var(--line-soft);
+    border-radius:var(--radius);
+    padding:16px;
+    font-size:14px;
+    transition: border-color 0.25s ease;
+  }
+  .cert-card:hover{border-color:var(--cyan-dim);}
+  .cert-card .cert-type{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:var(--amber);
+    margin-bottom:6px;
+  }
+
+  /* ===== SOP Library ===== */
+  .sop-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(270px,1fr));
+    gap:16px;
+    margin-bottom:32px;
+  }
+  .sop-card{
+    background: var(--bg-panel);
+    backdrop-filter: blur(6px);
+    border:1px solid var(--line-soft);
+    border-radius:var(--radius);
+    padding:18px 20px;
+    transition: border-color 0.25s ease, transform 0.25s ease;
+    display:block;
+    cursor:pointer;
+    text-decoration:none;
+  }
+  .sop-card:hover{
+    text-decoration:none;
+  }
+  .sop-files{
+    display:none;
+    margin-top:14px;
+    padding-top:14px;
+    border-top:1px solid var(--line-soft);
+  }
+  .sop-files.open{display:block;}
+  .sop-files .sop-file-row{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:6px 0;
+    font-size:12.5px;
+  }
+  .sop-files .sop-file-row a{
+    color:var(--ink-white);
+    display:flex;
+    align-items:center;
+    gap:7px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .sop-files .sop-file-row a:hover{color:var(--cyan);text-decoration:none;}
+  .sop-files .sop-file-icon{flex:0 0 auto;width:13px;height:13px;stroke:var(--cyan);fill:none;stroke-width:1.8;}
+  .sop-files .sop-loading, .sop-files .sop-empty, .sop-files .sop-error{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    color:var(--ink-muted);
+  }
+  .sop-card:hover{
+    border-color:var(--cyan-dim);
+    transform:translateY(-2px);
+  }
+  .sop-card-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-bottom:10px;
+  }
+  .sop-card h3{
+    font-size:15px;
+    font-weight:600;
+    color:var(--ink-white);
+  }
+  .sop-count{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--cyan);
+    border:1px solid var(--line-soft);
+    border-radius:12px;
+    padding:2px 9px;
+    white-space:nowrap;
+  }
+  .sop-examples{
+    list-style:none;
+    font-size:13px;
+    color:var(--ink-muted);
+  }
+  .sop-examples li{
+    position:relative;
+    padding-left:14px;
+    margin-bottom:5px;
+  }
+  .sop-examples li::before{
+    content:'—';
+    position:absolute;
+    left:0;
+    color:var(--ink-faint);
+  }
+  .sop-view-link{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11.5px;
+    color:var(--cyan);
+    margin-top:12px;
+    display:flex;
+    align-items:center;
+    gap:5px;
+  }
+  .sop-cta{
+    display:flex;
+    justify-content:center;
+  }
+  .sop-cta a{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13.5px;
+    color:var(--bg-black);
+    background:var(--cyan);
+    padding:12px 26px;
+    border-radius:var(--radius);
+    font-weight:600;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    box-shadow:0 0 20px rgba(79,224,240,0.25);
+    transition: box-shadow 0.25s ease, transform 0.2s ease;
+  }
+  .sop-cta a:hover{
+    text-decoration:none;
+    box-shadow:0 0 28px rgba(79,224,240,0.4);
+    transform:translateY(-1px);
+  }
+  .sop-note{
+    text-align:center;
+    font-size:12.5px;
+    color:var(--ink-faint);
+    margin-top:14px;
+  }
+
+  /* ===== Education ===== */
+  .edu-row{
+    display:flex;
+    justify-content:space-between;
+    padding:14px 0;
+    border-top:1px solid var(--line-soft);
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  .edu-row:first-child{border-top:none;}
+  .edu-name{font-weight:600;font-size:14.5px;color:var(--ink-white);}
+  .edu-school{font-size:13.5px;color:var(--ink-muted);}
+  .edu-dates{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13px;
+    color:var(--ink-muted);
+    white-space:nowrap;
+  }
+
+  /* ===== Footer ===== */
+  footer{
+    padding:44px 0 60px;
+    text-align:center;
+  }
+  footer .mono{color:var(--ink-faint);font-size:12px;}
+  footer .contact-row{
+    display:flex;
+    justify-content:center;
+    gap:28px;
+    flex-wrap:wrap;
+    margin-bottom:20px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13.5px;
+  }
+  footer .contact-row a, footer .contact-row span{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    color:var(--ink-white);
+  }
+  footer .contact-row a:hover{color:var(--cyan);}
+
+  @media (max-width:640px){
+    .stats{grid-template-columns:repeat(2,1fr);}
+    .stat:nth-child(2){border-right:none;}
+    .job{grid-template-columns:1fr;}
+    .tb-right{text-align:left;}
+    .tb-right .contact-line{justify-content:flex-start;}
+    .titleblock{flex-direction:column;}
+  }
+</style>
+</head>
+<body>
+<div class="circuit-bg"></div>
+
+<header>
+  <div class="wrap">
+    <div class="titleblock">
+      <div class="tb-left">
+        <h1>Akshay Mohan Kank</h1>
+        <div class="role-line">PostgreSQL Database Administrator<span class="arrow">→</span>Cloud &amp; DevOps Database Engineer</div>
+      </div>
+      <div class="tb-right">
+        <div class="contact-line">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+          Mumbai, Maharashtra, India
+        </div>
+        <div class="contact-line">
+          <svg class="icon" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg>
+          <a href="mailto:kank.akshay701@gmail.com">kank.akshay701@gmail.com</a>
+        </div>
+        <div class="contact-line">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.7a2 2 0 0 1-.4 2.1L8 9.9a16 16 0 0 0 6 6l1.4-1.4a2 2 0 0 1 2.1-.4c.9.3 1.8.5 2.7.6a2 2 0 0 1 1.7 2Z"/></svg>
+          +91 91670 08686
+        </div>
+        <div class="contact-line">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6Z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+          <a href="https://linkedin.com/in/akshaykank701" target="_blank" rel="noopener">linkedin.com/in/akshaykank701</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="hud-section">
+  <div class="hud-wrap">
+    <div class="hud-glow"></div>
+    <div class="eyebrow" style="text-align:center;">Live ops view</div>
+    <p style="text-align:center;color:var(--ink-muted);font-size:13.5px;margin-bottom:8px;">The kind of dashboard I watch every day, on the job</p>
+    <svg viewBox="-110 -10 620 320" style="width:100%;height:auto;position:relative;overflow:visible;" role="img" aria-label="Illustration of a database monitoring dashboard showing uptime, replication lag, instance count, and recovery status">
+      <title>Live database monitoring view</title>
+      <circle class="hud-ring spin" cx="200" cy="160" r="70" stroke-width="1" stroke-dasharray="2 6"/>
+      <circle class="hud-ring spin-rev" cx="200" cy="160" r="88" stroke-width="1" stroke-dasharray="1 5"/>
+      <circle class="hud-ring" cx="200" cy="160" r="52" stroke-width="1"/>
+      <circle cx="200" cy="160" r="40" fill="rgba(14,27,44,0.85)" stroke="var(--cyan)" stroke-opacity="0.5" stroke-width="1"/>
+      <text x="200" y="153" class="hud-core-label" style="font-size:15px;font-weight:600;">DBA</text>
+      <text x="200" y="170" class="hud-core-sub">PostgreSQL</text>
+
+      <line x1="248" y1="130" x2="300" y2="80" stroke="var(--cyan)" stroke-opacity="0.4" stroke-width="1"/>
+      <circle cx="300" cy="80" r="2.5" fill="var(--cyan)"/>
+      <text x="308" y="77" class="hud-node-label">Uptime</text>
+      <text x="308" y="90" class="hud-node-value">99.98%</text>
+
+      <line x1="252" y1="160" x2="330" y2="160" stroke="var(--cyan)" stroke-opacity="0.4" stroke-width="1"/>
+      <circle cx="330" cy="160" r="2.5" fill="var(--cyan)"/>
+      <text x="338" y="157" class="hud-node-label">Replication lag</text>
+      <text x="338" y="170" class="hud-node-value">under 50ms</text>
+
+      <line x1="248" y1="192" x2="296" y2="238" stroke="var(--cyan)" stroke-opacity="0.4" stroke-width="1"/>
+      <circle cx="296" cy="238" r="2.5" fill="var(--cyan)"/>
+      <text x="304" y="235" class="hud-node-label">Instances watched</text>
+      <text x="304" y="248" class="hud-node-value">100+</text>
+
+      <line x1="152" y1="192" x2="104" y2="238" stroke="var(--cyan)" stroke-opacity="0.4" stroke-width="1"/>
+      <circle cx="104" cy="238" r="2.5" fill="var(--cyan)"/>
+      <text x="96" y="235" class="hud-node-label" text-anchor="end">Recovery point</text>
+      <text x="96" y="248" class="hud-node-value" text-anchor="end">near-zero data loss</text>
+
+      <line x1="152" y1="160" x2="74" y2="160" stroke="var(--amber)" stroke-opacity="0.45" stroke-width="1"/>
+      <circle cx="74" cy="160" r="2.5" fill="var(--amber)"/>
+      <text x="66" y="157" class="hud-node-label" text-anchor="end">Failover mode</text>
+      <text x="66" y="170" class="hud-node-value" text-anchor="end">automated</text>
+
+      <line x1="152" y1="130" x2="90" y2="82" stroke="var(--cyan)" stroke-opacity="0.4" stroke-width="1"/>
+      <circle cx="90" cy="82" r="2.5" fill="var(--cyan)"/>
+      <text x="82" y="79" class="hud-node-label" text-anchor="end">Monitoring stack</text>
+      <text x="82" y="92" class="hud-node-value" text-anchor="end">Grafana + Prometheus</text>
+    </svg>
+  </div>
+</div>
+
+<div class="stats">
+  <div class="wrap" style="display:contents;">
+    <div class="stat"><div class="num">3+</div><div class="label">Years in database ops</div></div>
+    <div class="stat"><div class="num">100+</div><div class="label">PostgreSQL instances managed</div></div>
+    <div class="stat"><div class="num">5</div><div class="label">Certifications</div></div>
+    <div class="stat"><div class="num">20+</div><div class="label">HA clusters deployed</div></div>
+  </div>
+</div>
+
+<section id="topology">
+  <div class="wrap">
+    <div class="eyebrow">Career path</div>
+    <h2>How I got here — and where I'm heading</h2>
+    <p class="summary">I started on the hardware and site-engineering side, moved into hands-on PostgreSQL administration, and I'm now building the cloud and automation skills to run databases as code rather than by hand.</p>
+    <div class="topology">
+      <div class="node"><div class="role">Site engineer</div><div class="years">2018 – 2021</div></div>
+      <div class="connector"></div>
+      <div class="node"><div class="role">PostgreSQL DBA</div><div class="years">2021 – 2022</div></div>
+      <div class="connector"></div>
+      <div class="node"><div class="role">Senior technical associate</div><div class="years">2022 – present</div></div>
+      <div class="connector dashed"></div>
+      <div class="node goal"><div class="role">Cloud / DevOps engineer</div><div class="years">in progress</div></div>
+    </div>
+    <div class="topology-legend">
+      <div class="legend-item"><span class="legend-swatch"></span>Completed</div>
+      <div class="legend-item"><span class="legend-swatch dashed"></span>Actively building toward</div>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="wrap">
+    <div class="eyebrow">Summary</div>
+    <h2>What I do</h2>
+    <p class="summary" style="font-size:16px;color:var(--ink-white);">
+      I keep PostgreSQL databases running reliably for production applications — from setup and daily monitoring to disaster recovery and performance tuning. I've supported large multi-client environments with 24x7 uptime requirements, and I'm now extending that experience into AWS, Terraform, and automation so I can manage infrastructure as code instead of by hand, one server at a time.
+    </p>
+  </div>
+</section>
+
+<section id="expertise">
+  <div class="wrap">
+    <div class="eyebrow">Areas of expertise</div>
+    <h2>What I'm good at, in plain terms</h2>
+    <div class="expertise-grid">
+      <div class="expertise-card">
+        <div class="icon-label">Reliability</div>
+        <h3>Keeping databases running</h3>
+        <p>Backups, restores, and disaster recovery planning so data is never lost, even if a server fails.</p>
+      </div>
+      <div class="expertise-card">
+        <div class="icon-label">High availability</div>
+        <h3>Automatic failover</h3>
+        <p>Streaming replication, Patroni, repmgr, and EFM so systems keep serving traffic even during outages.</p>
+      </div>
+      <div class="expertise-card">
+        <div class="icon-label">Performance</div>
+        <h3>Tuning &amp; troubleshooting</h3>
+        <p>Finding slow queries, tuning memory settings, and running regular maintenance to keep things fast.</p>
+      </div>
+      <div class="expertise-card">
+        <div class="icon-label">Security</div>
+        <h3>Access control</h3>
+        <p>Managing who can see and change what, using roles and permissions the right way.</p>
+      </div>
+      <div class="expertise-card">
+        <div class="icon-label">Monitoring</div>
+        <h3>Watching system health</h3>
+        <p>Dashboards and alerts using Grafana, Prometheus, pgBadger, and custom scripts so issues get caught early.</p>
+      </div>
+      <div class="expertise-card">
+        <div class="icon-label">Growing skill</div>
+        <h3>Cloud platforms</h3>
+        <p>Deploying and managing PostgreSQL on AWS (EC2, RDS) and Oracle Cloud Infrastructure.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="experience">
+  <div class="wrap">
+    <div class="eyebrow">Work experience</div>
+    <h2>Where I've worked</h2>
+
+    <div class="job">
+      <div class="job-meta">
+        <span class="dates">Nov 2022 – Present</span>
+        Mumbai / Mulund, India
+      </div>
+      <div>
+        <div class="job-title">Senior Technical Associate</div>
+        <div class="job-company">Clouddbtech Pvt. Ltd.</div>
+        <p class="job-desc">Manage and support PostgreSQL databases for several large clients, handling everything from setup to performance tuning to disaster recovery — often across 24x7 production environments.</p>
+        <div class="tag-row">
+          <span class="tag">PostgreSQL</span><span class="tag">Patroni</span><span class="tag">repmgr</span>
+          <span class="tag">Grafana</span><span class="tag">Prometheus</span><span class="tag">AWS RDS/EC2</span>
+          <span class="tag">OCI</span>
+        </div>
+
+        <div class="project-block">
+          <h4>NTT Data — 50+ PostgreSQL instances</h4>
+          <ul>
+            <li>Set up and configured PostgreSQL on both Linux and Windows for production and development use.</li>
+            <li>Managed user roles and permissions to keep access secure.</li>
+            <li>Ran backup and recovery using pg_dump, pg_restore, and pg_basebackup, including point-in-time recovery.</li>
+            <li>Built a high-availability setup with Enterprise Fail-over Manager for the Mobicule client.</li>
+            <li>Led a major PostgreSQL upgrade from version 12 to 15, including testing and validation.</li>
+            <li>Set up 14 instances with streaming replication and a separate disaster recovery site.</li>
+          </ul>
+        </div>
+
+        <div class="project-block">
+          <h4>Adani — 50+ instances across state-level clusters</h4>
+          <ul>
+            <li>Rolled out Patroni-based high availability with etcd across 20+ clusters running PostgreSQL 15.</li>
+            <li>Managed production, QA, and development environments for stability and performance.</li>
+            <li>Tuned queries and memory settings using pg_stat_statements and EXPLAIN ANALYZE.</li>
+            <li>Built monitoring dashboards with Prometheus and Grafana, plus custom alerting scripts.</li>
+            <li>Tested disaster recovery scenarios including automated failover and manual switchover.</li>
+          </ul>
+        </div>
+
+        <div class="project-block">
+          <h4>Profectus — cloud-hosted PostgreSQL (AWS &amp; OCI)</h4>
+          <ul>
+            <li>Deployed and tuned PostgreSQL on AWS EC2, with backup strategies and performance monitoring.</li>
+            <li>Connected RDS PostgreSQL with CloudWatch and S3 for monitoring and backup storage.</li>
+            <li>Set up high availability using streaming replication, Patroni, and repmgr on cloud infrastructure.</li>
+            <li>Worked with application teams on secure networking using VPCs, subnets, and IAM roles.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="job">
+      <div class="job-meta"><span class="dates">2019 – 2021</span>Mumbai, India</div>
+      <div>
+        <div class="job-title">Site Engineer</div>
+        <div class="job-company">Assen Power Pvt. Ltd.</div>
+        <p class="job-desc">Worked on-site for the MPE department supporting industrial clients including Raymond and Rustomjee, building the hands-on technical foundation that later carried into database work.</p>
+      </div>
+    </div>
+
+    <div class="job">
+      <div class="job-meta"><span class="dates">2018 – 2019</span>India</div>
+      <div>
+        <div class="job-title">Junior Engineer</div>
+        <div class="job-company">Sanjyot Electricals</div>
+        <p class="job-desc">Started my engineering career here, learning the fundamentals of technical problem-solving in the field.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="certifications">
+  <div class="wrap">
+    <div class="eyebrow">Certifications &amp; achievements</div>
+    <h2>Credentials</h2>
+    <div class="cert-grid">
+      <div class="cert-card"><div class="cert-type">Certification</div>PostgreSQL Essentials v16</div>
+      <div class="cert-card"><div class="cert-type">Certification</div>MySQL Implementation Certified Associate</div>
+      <div class="cert-card"><div class="cert-type">Certification</div>MySQL 8.0 Database Administrator</div>
+      <div class="cert-card"><div class="cert-type">Certification</div>Oracle Cloud Infrastructure 2025 Certified Architect Associate</div>
+      <div class="cert-card"><div class="cert-type">Certification</div>Introduction to Oracle Cloud Essentials</div>
+      <div class="cert-card"><div class="cert-type">Achievement</div>Rising Star, Clouddbtech — 2024</div>
+      <div class="cert-card"><div class="cert-type">Achievement</div>Company Value Award, Clouddbtech — 2025</div>
+      <div class="cert-card"><div class="cert-type">Achievement</div>Appreciation certificate for a major version upgrade — UTI</div>
+    </div>
+  </div>
+</section>
+
+<section id="sops">
+  <div class="wrap">
+    <div class="eyebrow">Documentation &amp; SOPs</div>
+    <h2>85+ SOPs covering the full PostgreSQL operations lifecycle</h2>
+    <p class="summary" style="margin-bottom:32px;">
+      Over three years I've built and maintained a personal library of standard operating procedures — from day-one installation through incident response and disaster recovery. Grouped below by category, with the full set linked at the bottom.
+    </p>
+
+    <div class="sop-grid">
+      <div class="sop-card" data-path="sops/installation-configuration" onclick="toggleSOP(this)">
+        <div class="sop-card-head"><h3>Installation &amp; Configuration</h3><span class="sop-count">6 SOPs</span></div>
+        <ul class="sop-examples">
+          <li>Installation SOP</li>
+          <li>Upgrade SOP (major &amp; minor)</li>
+          <li>Parameter tuning SOP</li>
+        </ul>
+        <div class="sop-view-link">View SOPs →</div>
+        <div class="sop-files"><div class="sop-loading">Loading files…</div></div>
+      </div>
+
+      <div class="sop-card" data-path="sops/database-administration" onclick="toggleSOP(this)">
+        <div class="sop-card-head"><h3>Database Administration</h3><span class="sop-count">6 SOPs</span></div>
+        <ul class="sop-examples">
+          <li>User &amp; role management SOP</li>
+          <li>Privilege / RBAC management SOP</li>
+          <li>Tablespace management SOP</li>
+        </ul>
+        <div class="sop-view-link">View SOPs →</div>
+        <div class="sop-files"><div class="sop-loading">Loading files…</div></div>
+      </div>
+
+      <div class="sop-card" data-path="sops/backup-recovery" onclick="toggleSOP(this)">
+        <div class="sop-card-head"><h3>Backup &amp; Recovery</h3><span class="sop-count">6 SOPs</span></div>
+        <ul class="sop-examples">
+          <li>Point-in-time recovery (PITR) SOP</li>
+          <li>WAL archiving SOP</li>
+          <li>Disaster recovery SOP</li>
+        </ul>
+        <div class="sop-view-link">View SOPs →</div>
+        <div class="sop-files"><div class="sop-loading">Loading files…</div></div>
+      </div>
+
+      <div class="sop-card" data-path="sops/high-availability-replication" onclick="toggleSOP(this)">
+        <div class="sop-card-head"><h3>High Availability &amp; Replication</h3><span class="sop-count">8 SOPs</span></div>
+        <ul class="sop-examples">
+          <li>Patroni cluster management SOP</li>
+          <li>repmgr management SOP</li>
+          <li>Failover &amp; switchover SOP</li>
+        </ul>
+        <div class="sop-view-link">View SOPs →</div>
+        <div class="sop-files"><div class="sop-loading">Loading files…</div></div>
+      </div>
+
+      <div class="sop-card" data-path="sops/performance-optimization" onclick="toggleSOP(this)">
+        <div class="sop-card-head"><h3>Performance &amp; Optimization</h3><span class="sop-count">8 SOPs</span></div>
+        <ul class="sop-examples">
+          <li>Query optimization SOP</li>
+          <li>Autovacuum tuning SOP</li>
+          <li>Table &amp; index bloat management SOP</li>
+        </ul>
+        <div class="sop-view-link">View SOPs →</div>
+        <div class="sop-files"><div class="sop-loading">Loading files…</div></div>
+      </div>
+
+      <div class="sop-card" data-path="sops/monitoring-health-checks" onclick="toggleSOP(this)">
+        <div class="sop-card-head"><h3>Monitoring &amp; Health Checks</h3><span class="sop-count">7 SOPs</span></div>
+        <ul class="sop-examples">
+          <li>Daily / weekly / monthly health check SOPs</li>
+          <li>Capacity planning SOP</li>
+          <li>Alert management SOP</li>
+        </ul>
+        <div class="sop-view-link">View SOPs →</div>
+        <div class="sop-files"><div class="sop-loading">Loading files…</div></div>
+      </div>
+
+      <div class="sop-card" data-path="sops/security" onclick="toggleSOP(this)">
+        <div class="sop-card-head"><h3>Security</h3><span class="sop-count">6 SOPs</span></div>
+        <ul class="sop-examples">
+          <li>SSL/TLS configuration SOP</li>
+          <li>Audit logging SOP</li>
+          <li>Compliance &amp; security audit SOP</li>
+        </ul>
+        <div class="sop-view-link">View SOPs →</div>
+        <div class="sop-files"><div class="sop-loading">Loading files…</div></div>
+      </div>
+
+      <div class="sop-card" data-path="sops/incident-management" onclick="toggleSOP(this)">
+        <div class="sop-card-head"><h3>Incident Management</h3><span class="sop-count">13 SOPs</span></div>
+        <ul class="sop-examples">
+          <li>Deadlock resolution SOP</li>
+          <li>Replication lag SOP</li>
+          <li>Emergency database recovery SOP</li>
+        </ul>
+        <div class="sop-view-link">View SOPs →</div>
+        <div class="sop-files"><div class="sop-loading">Loading files…</div></div>
+      </div>
+
+      <div class="sop-card" data-path="sops/migration" onclick="toggleSOP(this)">
+        <div class="sop-card-head"><h3>Migration</h3><span class="sop-count">6 SOPs</span></div>
+        <ul class="sop-examples">
+          <li>Oracle to PostgreSQL migration SOP</li>
+          <li>Data validation SOP</li>
+          <li>Application cutover SOP</li>
+        </ul>
+        <div class="sop-view-link">View SOPs →</div>
+        <div class="sop-files"><div class="sop-loading">Loading files…</div></div>
+      </div>
+
+      <div class="sop-card" data-path="sops/maintenance" onclick="toggleSOP(this)">
+        <div class="sop-card-head"><h3>Maintenance</h3><span class="sop-count">8 SOPs</span></div>
+        <ul class="sop-examples">
+          <li>Reindex SOP</li>
+          <li>Partition maintenance SOP</li>
+          <li>Log rotation SOP</li>
+        </ul>
+        <div class="sop-view-link">View SOPs →</div>
+        <div class="sop-files"><div class="sop-loading">Loading files…</div></div>
+      </div>
+
+      <div class="sop-card" data-path="sops/linux-administration" onclick="toggleSOP(this)">
+        <div class="sop-card-head"><h3>Linux Administration</h3><span class="sop-count">6 SOPs</span></div>
+        <ul class="sop-examples">
+          <li>Storage &amp; filesystem management SOP</li>
+          <li>Network troubleshooting SOP</li>
+          <li>OS patch management SOP</li>
+        </ul>
+        <div class="sop-view-link">View SOPs →</div>
+        <div class="sop-files"><div class="sop-loading">Loading files…</div></div>
+      </div>
+
+      <div class="sop-card" data-path="sops/cloud-enterprise" onclick="toggleSOP(this)">
+        <div class="sop-card-head"><h3>Cloud &amp; Enterprise</h3><span class="sop-count">5 SOPs</span></div>
+        <ul class="sop-examples">
+          <li>AWS RDS PostgreSQL SOP</li>
+          <li>Kubernetes PostgreSQL SOP</li>
+          <li>EnterpriseDB (EPAS) administration SOP</li>
+        </ul>
+        <div class="sop-view-link">View SOPs →</div>
+        <div class="sop-files"><div class="sop-loading">Loading files…</div></div>
+      </div>
+    </div>
+
+    <div class="sop-cta">
+      <a href="https://github.com/AKSHAY701KANK/akshaykank701.github.io/tree/main/sops" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--bg-black);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2Z"/></svg>
+        Browse the full SOP library on GitHub
+      </a>
+    </div>
+    <p class="sop-note">Click any category above to jump straight to that folder</p>
+  </div>
+</section>
+
+<section id="education">
+  <div class="wrap">
+    <div class="eyebrow">Education</div>
+    <h2>Academic background</h2>
+    <div class="edu-row">
+      <div>
+        <div class="edu-name">Bachelor of Engineering, EXTC</div>
+        <div class="edu-school">Lokmanya Tilak College of Engineering, Mumbai University</div>
+      </div>
+      <div class="edu-dates">Aug 2015 – May 2018</div>
+    </div>
+    <div class="edu-row">
+      <div>
+        <div class="edu-name">Diploma, EXTC</div>
+        <div class="edu-school">Terna Polytechnic (MSBTE)</div>
+      </div>
+      <div class="edu-dates">Aug 2012 – Jun 2015</div>
+    </div>
+    <div class="edu-row">
+      <div>
+        <div class="edu-name">SSC</div>
+        <div class="edu-school">Peoples Education Society High School, Thane</div>
+      </div>
+      <div class="edu-dates">May 2012</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="contact-row">
+      <a href="mailto:kank.akshay701@gmail.com">
+        <svg class="icon" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg>
+        kank.akshay701@gmail.com
+      </a>
+      <span>
+        <svg class="icon" viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.6A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.7a2 2 0 0 1-.4 2.1L8 9.9a16 16 0 0 0 6 6l1.4-1.4a2 2 0 0 1 2.1-.4c.9.3 1.8.5 2.7.6a2 2 0 0 1 1.7 2Z"/></svg>
+        +91 91670 08686
+      </span>
+      <a href="https://linkedin.com/in/akshaykank701" target="_blank" rel="noopener">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6Z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        LinkedIn
+      </a>
+    </div>
+    <div class="mono">Mumbai, Maharashtra, India</div>
+  </div>
+</footer>
+
+<script>
+async function toggleSOP(card) {
+  const panel = card.querySelector('.sop-files');
+  const isOpen = panel.classList.contains('open');
+
+  // collapse all other open panels for a cleaner accordion feel
+  document.querySelectorAll('.sop-files.open').forEach(p => { if (p !== panel) p.classList.remove('open'); });
+
+  if (isOpen) {
+    panel.classList.remove('open');
+    return;
+  }
+  panel.classList.add('open');
+
+  if (panel.dataset.loaded === 'true') return;
+
+  const path = card.dataset.path;
+  const apiUrl = `https://api.github.com/repos/AKSHAY701KANK/akshaykank701.github.io/contents/${path}`;
+
+  try {
+    const res = await fetch(apiUrl);
+    if (!res.ok) throw new Error('fetch failed');
+    const items = await res.json();
+    const files = (Array.isArray(items) ? items : []).filter(i => i.type === 'file' && i.name.toLowerCase() !== 'readme.md');
+
+    if (files.length === 0) {
+      panel.innerHTML = '<div class="sop-empty">Files coming soon — check back shortly.</div>';
+    } else {
+      panel.innerHTML = files.map(f => `
+        <div class="sop-file-row">
+          <a href="${f.download_url}" target="_blank" rel="noopener">
+            <svg class="sop-file-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/></svg>
+            <span>${f.name}</span>
+          </a>
+        </div>
+      `).join('');
+    }
+    panel.dataset.loaded = 'true';
+  } catch (err) {
+    panel.innerHTML = '<div class="sop-error">Could not load files right now — try the GitHub link below.</div>';
+  }
+}
+</script>
+
+</body>
+</html>
