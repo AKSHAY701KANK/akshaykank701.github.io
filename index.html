@@ -67,19 +67,6 @@
     flex-wrap:wrap;
     gap:24px;
   }
-  .tb-left .drawing-no{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:11px;
-    letter-spacing:0.14em;
-    color:var(--cyan);
-    text-transform:uppercase;
-    border:1px solid var(--line-soft);
-    padding:4px 10px;
-    border-radius:var(--radius);
-    display:inline-block;
-    margin-bottom:16px;
-    box-shadow: 0 0 12px rgba(79,224,240,0.12) inset;
-  }
   h1{
     font-size:clamp(32px,5vw,50px);
     font-weight:700;
@@ -428,6 +415,91 @@
     margin-bottom:6px;
   }
 
+  /* ===== SOP Library ===== */
+  .sop-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(270px,1fr));
+    gap:16px;
+    margin-bottom:32px;
+  }
+  .sop-card{
+    background: var(--bg-panel);
+    backdrop-filter: blur(6px);
+    border:1px solid var(--line-soft);
+    border-radius:var(--radius);
+    padding:18px 20px;
+    transition: border-color 0.25s ease, transform 0.25s ease;
+  }
+  .sop-card:hover{
+    border-color:var(--cyan-dim);
+    transform:translateY(-2px);
+  }
+  .sop-card-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-bottom:10px;
+  }
+  .sop-card h3{
+    font-size:15px;
+    font-weight:600;
+    color:var(--ink-white);
+  }
+  .sop-count{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--cyan);
+    border:1px solid var(--line-soft);
+    border-radius:12px;
+    padding:2px 9px;
+    white-space:nowrap;
+  }
+  .sop-examples{
+    list-style:none;
+    font-size:13px;
+    color:var(--ink-muted);
+  }
+  .sop-examples li{
+    position:relative;
+    padding-left:14px;
+    margin-bottom:5px;
+  }
+  .sop-examples li::before{
+    content:'—';
+    position:absolute;
+    left:0;
+    color:var(--ink-faint);
+  }
+  .sop-cta{
+    display:flex;
+    justify-content:center;
+  }
+  .sop-cta a{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13.5px;
+    color:var(--bg-black);
+    background:var(--cyan);
+    padding:12px 26px;
+    border-radius:var(--radius);
+    font-weight:600;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    box-shadow:0 0 20px rgba(79,224,240,0.25);
+    transition: box-shadow 0.25s ease, transform 0.2s ease;
+  }
+  .sop-cta a:hover{
+    text-decoration:none;
+    box-shadow:0 0 28px rgba(79,224,240,0.4);
+    transform:translateY(-1px);
+  }
+  .sop-note{
+    text-align:center;
+    font-size:12.5px;
+    color:var(--ink-faint);
+    margin-top:14px;
+  }
+
   /* ===== Education ===== */
   .edu-row{
     display:flex;
@@ -493,7 +565,7 @@
       <div class="tb-right">
         <div class="contact-line">
           <svg class="icon" viewBox="0 0 24 24"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-          Thane, Maharashtra, India
+          Mumbai, Maharashtra, India
         </div>
         <div class="contact-line">
           <svg class="icon" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg>
@@ -646,7 +718,7 @@
     <div class="job">
       <div class="job-meta">
         <span class="dates">Nov 2022 – Present</span>
-        Thane / Mulund, India
+        Mumbai / Mulund, India
       </div>
       <div>
         <div class="job-title">Senior Technical Associate</div>
@@ -694,7 +766,7 @@
     </div>
 
     <div class="job">
-      <div class="job-meta"><span class="dates">2019 – 2021</span>Thane, India</div>
+      <div class="job-meta"><span class="dates">2019 – 2021</span>Mumbai, India</div>
       <div>
         <div class="job-title">Site Engineer</div>
         <div class="job-company">Assen Power Pvt. Ltd.</div>
@@ -727,6 +799,134 @@
       <div class="cert-card"><div class="cert-type">Achievement</div>Company Value Award, Clouddbtech — 2025</div>
       <div class="cert-card"><div class="cert-type">Achievement</div>Appreciation certificate for a major version upgrade — UTI</div>
     </div>
+  </div>
+</section>
+
+<section id="sops">
+  <div class="wrap">
+    <div class="eyebrow">Documentation &amp; SOPs</div>
+    <h2>85+ SOPs covering the full PostgreSQL operations lifecycle</h2>
+    <p class="summary" style="margin-bottom:32px;">
+      Over three years I've built and maintained a personal library of standard operating procedures — from day-one installation through incident response and disaster recovery. Grouped below by category, with the full set linked at the bottom.
+    </p>
+
+    <div class="sop-grid">
+      <div class="sop-card">
+        <div class="sop-card-head"><h3>Installation &amp; Configuration</h3><span class="sop-count">6 SOPs</span></div>
+        <ul class="sop-examples">
+          <li>Installation SOP</li>
+          <li>Upgrade SOP (major &amp; minor)</li>
+          <li>Parameter tuning SOP</li>
+        </ul>
+      </div>
+
+      <div class="sop-card">
+        <div class="sop-card-head"><h3>Database Administration</h3><span class="sop-count">6 SOPs</span></div>
+        <ul class="sop-examples">
+          <li>User &amp; role management SOP</li>
+          <li>Privilege / RBAC management SOP</li>
+          <li>Tablespace management SOP</li>
+        </ul>
+      </div>
+
+      <div class="sop-card">
+        <div class="sop-card-head"><h3>Backup &amp; Recovery</h3><span class="sop-count">6 SOPs</span></div>
+        <ul class="sop-examples">
+          <li>Point-in-time recovery (PITR) SOP</li>
+          <li>WAL archiving SOP</li>
+          <li>Disaster recovery SOP</li>
+        </ul>
+      </div>
+
+      <div class="sop-card">
+        <div class="sop-card-head"><h3>High Availability &amp; Replication</h3><span class="sop-count">8 SOPs</span></div>
+        <ul class="sop-examples">
+          <li>Patroni cluster management SOP</li>
+          <li>repmgr management SOP</li>
+          <li>Failover &amp; switchover SOP</li>
+        </ul>
+      </div>
+
+      <div class="sop-card">
+        <div class="sop-card-head"><h3>Performance &amp; Optimization</h3><span class="sop-count">8 SOPs</span></div>
+        <ul class="sop-examples">
+          <li>Query optimization SOP</li>
+          <li>Autovacuum tuning SOP</li>
+          <li>Table &amp; index bloat management SOP</li>
+        </ul>
+      </div>
+
+      <div class="sop-card">
+        <div class="sop-card-head"><h3>Monitoring &amp; Health Checks</h3><span class="sop-count">7 SOPs</span></div>
+        <ul class="sop-examples">
+          <li>Daily / weekly / monthly health check SOPs</li>
+          <li>Capacity planning SOP</li>
+          <li>Alert management SOP</li>
+        </ul>
+      </div>
+
+      <div class="sop-card">
+        <div class="sop-card-head"><h3>Security</h3><span class="sop-count">6 SOPs</span></div>
+        <ul class="sop-examples">
+          <li>SSL/TLS configuration SOP</li>
+          <li>Audit logging SOP</li>
+          <li>Compliance &amp; security audit SOP</li>
+        </ul>
+      </div>
+
+      <div class="sop-card">
+        <div class="sop-card-head"><h3>Incident Management</h3><span class="sop-count">13 SOPs</span></div>
+        <ul class="sop-examples">
+          <li>Deadlock resolution SOP</li>
+          <li>Replication lag SOP</li>
+          <li>Emergency database recovery SOP</li>
+        </ul>
+      </div>
+
+      <div class="sop-card">
+        <div class="sop-card-head"><h3>Migration</h3><span class="sop-count">6 SOPs</span></div>
+        <ul class="sop-examples">
+          <li>Oracle to PostgreSQL migration SOP</li>
+          <li>Data validation SOP</li>
+          <li>Application cutover SOP</li>
+        </ul>
+      </div>
+
+      <div class="sop-card">
+        <div class="sop-card-head"><h3>Maintenance</h3><span class="sop-count">8 SOPs</span></div>
+        <ul class="sop-examples">
+          <li>Reindex SOP</li>
+          <li>Partition maintenance SOP</li>
+          <li>Log rotation SOP</li>
+        </ul>
+      </div>
+
+      <div class="sop-card">
+        <div class="sop-card-head"><h3>Linux Administration</h3><span class="sop-count">6 SOPs</span></div>
+        <ul class="sop-examples">
+          <li>Storage &amp; filesystem management SOP</li>
+          <li>Network troubleshooting SOP</li>
+          <li>OS patch management SOP</li>
+        </ul>
+      </div>
+
+      <div class="sop-card">
+        <div class="sop-card-head"><h3>Cloud &amp; Enterprise</h3><span class="sop-count">5 SOPs</span></div>
+        <ul class="sop-examples">
+          <li>AWS RDS PostgreSQL SOP</li>
+          <li>Kubernetes PostgreSQL SOP</li>
+          <li>EnterpriseDB (EPAS) administration SOP</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="sop-cta">
+      <a href="https://drive.google.com/drive/folders/1E8pEziTDy5U39n0KHkrixDt10xtvWD8j?usp=sharing" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--bg-black);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2Z"/></svg>
+        Open full SOP library on Google Drive
+      </a>
+    </div>
+    <p class="sop-note">Read-only access · reports and SOPs from my day-to-day work</p>
   </div>
 </section>
 
@@ -774,7 +974,7 @@
         LinkedIn
       </a>
     </div>
-    <div class="mono">Thane, Maharashtra, India</div>
+    <div class="mono">Mumbai, Maharashtra, India</div>
   </div>
 </footer>
 
